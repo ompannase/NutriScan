@@ -7,7 +7,7 @@ compatibility_date = "2025-09-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "nutriscan"
-database_id = "REPLACE_WITH_D1_DATABASE_ID"
+database_id = "a71338c9-75e5-4ee3-86e2-5bb517ab9968"
 migrations_dir = "migrations"
 
 # Optional Cloudflare Workers AI (no third-party key). Unverified free allowance:
@@ -25,6 +25,5 @@ AI_TIMEOUT_MS = "20000"
 AI_DAILY_GLOBAL_LIMIT = "500"
 # Model names change often and free access varies by account. Set these only
 # after checking the provider's current free-tier model list:
-# GEMINI_MODEL = ""
 # GROQ_MODEL = ""
 # WORKERS_AI_MODEL = ""
