@@ -1,0 +1,30 @@
+name = "nutriscan-api"
+main = "src/index.ts"
+compatibility_date = "2025-09-01"
+
+# Create the database first:  npx wrangler d1 create nutriscan
+# then paste the printed database_id below.
+[[d1_databases]]
+binding = "DB"
+database_name = "nutriscan"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+migrations_dir = "migrations"
+
+# Optional Cloudflare Workers AI (no third-party key). Unverified free allowance:
+# check https://developers.cloudflare.com/workers-ai/platform/pricing/ before enabling.
+# [ai]
+# binding = "AI"
+
+# Non-secret configuration. Secrets (API keys) are NOT set here; use
+# `npx wrangler secret put GEMINI_API_KEY` etc.
+[vars]
+AI_PROVIDER = "gemini"
+AI_FALLBACK_PROVIDERS = "groq"
+AI_REQUIRE_AUTH = "false"
+AI_TIMEOUT_MS = "20000"
+AI_DAILY_GLOBAL_LIMIT = "500"
+# Model names change often and free access varies by account. Set these only
+# after checking the provider's current free-tier model list:
+# GEMINI_MODEL = ""
+# GROQ_MODEL = ""
+# WORKERS_AI_MODEL = ""

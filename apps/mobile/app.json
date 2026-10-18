@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "NutriScan",
+    "slug": "nutriscan",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "nutriscan",
+    "userInterfaceStyle": "automatic",
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "NutriScan uses your camera to scan barcodes and nutrition labels.",
+          "barcodeScannerEnabled": true
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "NutriScan uses selected photos to read nutrition labels."
+        }
+      ],
+      "expo-sqlite"
+    ],
+    "android": {
+      "package": "com.nutriscan.mobile",
+      "permissions": ["CAMERA"]
+    },
+    "ios": {
+      "bundleIdentifier": "com.nutriscan.mobile"
+    },
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "description": "Analyze nutrition and compare food products using AI-powered barcode scanning, OCR, and personalized dietary profiles for informed dietary choices.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

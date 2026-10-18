@@ -1,0 +1,9 @@
+# Copy to .dev.vars for `wrangler dev`. Never commit .dev.vars.
+GEMINI_API_KEY=
+GEMINI_MODEL=
+GROQ_API_KEY=
+GROQ_MODEL=
+# Optional, unverified: only used if BOTH are set.
+POLLINATIONS_API_KEY=
+POLLINATIONS_BASE_URL=
+POLLINATIONS_MODEL=
