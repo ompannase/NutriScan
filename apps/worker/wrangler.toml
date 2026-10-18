@@ -18,8 +18,9 @@ migrations_dir = "migrations"
 # Non-secret configuration. Secrets (API keys) are NOT set here; use
 # `npx wrangler secret put GEMINI_API_KEY` etc.
 [vars]
-AI_PROVIDER = "gemini"
-AI_FALLBACK_PROVIDERS = "groq"
+AI_PROVIDER = "groq"
+AI_FALLBACK_PROVIDERS = ""
+GROQ_MODEL = "openai/gpt-oss-20b"
 AI_REQUIRE_AUTH = "false"
 AI_TIMEOUT_MS = "20000"
 AI_DAILY_GLOBAL_LIMIT = "500"
