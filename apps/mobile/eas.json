@@ -6,16 +6,16 @@
       "distribution": "internal",
       "android": { "buildType": "apk" },
       "env": {
-        "EXPO_PUBLIC_API_BASE_URL": "https://nutriscan-api.YOUR-SUBDOMAIN.workers.dev",
-        "EXPO_PUBLIC_OFF_CONTACT": "youremail@gmail.com"
+        "EXPO_PUBLIC_API_BASE_URL": "https://nutriscan-api.om-dev.workers.dev",
+        "EXPO_PUBLIC_OFF_CONTACT": "ompannase1506@gmail.com"
       }
     },
     "preview": {
       "distribution": "internal",
       "android": { "buildType": "apk" },
       "env": {
-        "EXPO_PUBLIC_API_BASE_URL": "https://nutriscan-api.YOUR-SUBDOMAIN.workers.dev",
-        "EXPO_PUBLIC_OFF_CONTACT": "youremail@gmail.com"
+        "EXPO_PUBLIC_API_BASE_URL": "https://nutriscan-api.om-dev.workers.dev",
+        "EXPO_PUBLIC_OFF_CONTACT": "ompannase1506@gmail.com"
       }
     },
     "production": { "android": { "buildType": "app-bundle" } }

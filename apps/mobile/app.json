@@ -27,7 +27,9 @@
     "android": {
       "package": "com.nutriscan.mobile",
       "permissions": [
-        "CAMERA"
+        "android.permission.CAMERA",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
       ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -40,6 +42,12 @@
     "experiments": {
       "typedRoutes": true
     },
-    "icon": "./assets/icon.png"
+    "icon": "./assets/icon.png",
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "75786632-2eb2-4842-a019-e959ca80de69"
+      }
+    }
   }
 }
