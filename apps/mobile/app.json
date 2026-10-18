@@ -26,13 +26,20 @@
     ],
     "android": {
       "package": "com.nutriscan.mobile",
-      "permissions": ["CAMERA"]
+      "permissions": [
+        "CAMERA"
+      ],
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#168A50"
+      }
     },
     "ios": {
       "bundleIdentifier": "com.nutriscan.mobile"
     },
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "icon": "./assets/icon.png"
   }
 }

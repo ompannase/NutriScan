@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "adfe5498-764d-4df5-a6ee-9cd01f1dfc3f"
+      }
+    },
+    "android": {
+      "package": "com.ompannase.nutriscanworker"
+    }
+  }
+}

@@ -1,4 +1,8 @@
-import type { PropsWithChildren, ReactNode } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { useEffect, useState, type PropsWithChildren, type ReactNode } from "react";
+import Animated, { useAnimatedProps, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import Svg, { Circle } from "react-native-svg";
 import {
   ActivityIndicator,
   Modal,
@@ -74,23 +78,53 @@ export function Chip({ label, selected = false, onPress }: { label: string; sele
   ><Text style={[styles.chipText, { color: selected ? colors.inverse : colors.text }]}>{label}</Text></Pressable>;
 }
 
-export function ProgressBar({ value, label }: { value: number; label: string }) {
+export function ProgressBar({ value, label, color }: { value: number; label: string; color?: string }) {
   const { colors } = useTheme();
   const percent = Math.max(0, Math.min(100, value));
+  const [width, setWidth] = useState(0);
+  const progress = useSharedValue(0);
+  useEffect(() => { progress.value = withTiming(percent / 100, { duration: 700 }); }, [percent, progress]);
+  const fillStyle = useAnimatedStyle(() => ({ width: width * progress.value }));
   return <View accessibilityRole="progressbar" accessibilityLabel={label} accessibilityValue={{ min: 0, max: 100, now: percent }}>
     <View style={styles.progressLabel}><Body>{label}</Body><Body muted>{Math.round(percent)}%</Body></View>
-    <View style={[styles.track, { backgroundColor: colors.elevated }]}>
-      <View style={[styles.fill, { backgroundColor: colors.primary, width: `${percent}%` }]} />
+    <View onLayout={(e) => setWidth(e.nativeEvent.layout.width)} style={[styles.track, { backgroundColor: colors.elevated }]}>
+      <Animated.View style={[styles.fill, { backgroundColor: color ?? colors.primary }, fillStyle]} />
     </View>
   </View>;
 }
 
-export function ProgressRing({ value, label }: { value?: number; label: string }) {
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+
+export function ProgressRing({ value, label, percent, color }: { value?: number; label: string; percent?: number; color?: string }) {
   const { colors } = useTheme();
-  return <View accessibilityRole="progressbar" accessibilityLabel={label} style={[styles.ring, { borderColor: colors.elevated }]}>
+  const size = 132, stroke = 13, radius = (size - stroke) / 2, circumference = 2 * Math.PI * radius;
+  const target = Math.max(0, Math.min(100, percent ?? (typeof value === "number" ? value : 0))) / 100;
+  const progress = useSharedValue(0);
+  useEffect(() => { progress.value = withTiming(target, { duration: 900 }); }, [target, progress]);
+  const animatedProps = useAnimatedProps(() => ({ strokeDashoffset: circumference * (1 - progress.value) }));
+  return <View accessibilityRole="progressbar" accessibilityLabel={label} style={{ width: size, height: size, alignItems: "center", justifyContent: "center" }}>
+    <Svg width={size} height={size} style={StyleSheet.absoluteFill}>
+      <Circle cx={size / 2} cy={size / 2} r={radius} stroke={colors.elevated} strokeWidth={stroke} fill="none" />
+      <AnimatedCircle cx={size / 2} cy={size / 2} r={radius} stroke={color ?? colors.primary} strokeWidth={stroke} strokeLinecap="round" fill="none" strokeDasharray={`${circumference} ${circumference}`} animatedProps={animatedProps} rotation="-90" origin={`${size / 2}, ${size / 2}`} />
+    </Svg>
     <Text style={[styles.ringValue, { color: colors.text }]}>{value ?? "—"}</Text>
     <Text style={[styles.ringLabel, { color: colors.muted }]}>{label}</Text>
   </View>;
+}
+
+/** Green gradient banner for screen headers. */
+export function Hero({ children }: PropsWithChildren) {
+  const { colors } = useTheme();
+  return <LinearGradient colors={[colors.gradA, colors.gradB]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.hero}>{children}</LinearGradient>;
+}
+
+/** Square quick-action tile with an icon. */
+export function Tile({ icon, label, onPress }: { icon: React.ComponentProps<typeof Ionicons>["name"]; label: string; onPress: () => void }) {
+  const { colors } = useTheme();
+  return <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress} style={({ pressed }) => [styles.tile, { backgroundColor: colors.surface, borderColor: colors.border, opacity: pressed ? 0.75 : 1 }]}>
+    <View style={[styles.tileIcon, { backgroundColor: colors.primarySoft }]}><Ionicons name={icon} size={21} color={colors.primary} /></View>
+    <Text style={[styles.tileLabel, { color: colors.text }]}>{label}</Text>
+  </Pressable>;
 }
 
 export function EmptyState({ title, message, action }: { title: string; message: string; action?: ReactNode }) {
@@ -135,12 +169,16 @@ export function Toast({ message, tone = "default" }: { message: string; tone?: "
 
 const styles = StyleSheet.create({
   titleWrap: { gap: 4 },
-  eyebrow: { fontSize: 12, fontWeight: "700", letterSpacing: 1.3 },
-  title: { fontSize: 32, lineHeight: 38, fontWeight: "800", letterSpacing: -1 },
+  eyebrow: { fontSize: 12, fontWeight: "800", letterSpacing: 1.6 },
+  title: { fontSize: 30, lineHeight: 36, fontWeight: "800", letterSpacing: -0.8 },
   body: { fontSize: 15, lineHeight: 22 },
-  button: { minHeight: 48, borderRadius: 16, paddingHorizontal: 20, alignItems: "center", justifyContent: "center" },
+  button: { minHeight: 52, borderRadius: 18, shadowColor: "#0A3D24", shadowOpacity: 0.15, shadowRadius: 8, shadowOffset: { width: 0, height: 3 }, paddingHorizontal: 20, alignItems: "center", justifyContent: "center" },
   buttonLabel: { fontSize: 16, fontWeight: "700" },
-  card: { borderWidth: StyleSheet.hairlineWidth, borderRadius: 16, padding: 16, gap: 12 },
+  card: { borderWidth: StyleSheet.hairlineWidth, borderRadius: 20, padding: 16, gap: 12, shadowColor: "#0A3D24", shadowOpacity: 0.08, shadowRadius: 12, shadowOffset: { width: 0, height: 4 }, elevation: 2 },
+  hero: { borderRadius: 28, padding: 22, gap: 6 },
+  tile: { flex: 1, minHeight: 92, borderRadius: 20, padding: 14, justifyContent: "space-between", borderWidth: StyleSheet.hairlineWidth },
+  tileLabel: { fontSize: 14, fontWeight: "700" },
+  tileIcon: { width: 38, height: 38, borderRadius: 12, alignItems: "center", justifyContent: "center" },
   field: { gap: 8 },
   label: { fontSize: 14, fontWeight: "700" },
   input: { minHeight: 52, borderWidth: 1, borderRadius: 12, paddingHorizontal: 16, fontSize: 16 },
@@ -148,7 +186,7 @@ const styles = StyleSheet.create({
   chip: { minHeight: 48, borderRadius: 999, borderWidth: 1, justifyContent: "center", paddingHorizontal: 16 },
   chipText: { fontSize: 14, fontWeight: "700" },
   progressLabel: { flexDirection: "row", justifyContent: "space-between" },
-  track: { height: 8, overflow: "hidden", borderRadius: 999, marginTop: 8 },
+  track: { height: 10, overflow: "hidden", borderRadius: 999, marginTop: 8 },
   fill: { height: "100%", borderRadius: 999 },
   ring: { width: 128, height: 128, borderRadius: 64, borderWidth: 12, justifyContent: "center", alignItems: "center" },
   ringValue: { fontSize: 32, fontWeight: "800" },

@@ -1,0 +1,23 @@
+{
+  "cli": { "version": ">= 12.0.0" },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "android": { "buildType": "apk" },
+      "env": {
+        "EXPO_PUBLIC_API_BASE_URL": "https://nutriscan-api.YOUR-SUBDOMAIN.workers.dev",
+        "EXPO_PUBLIC_OFF_CONTACT": "youremail@gmail.com"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "android": { "buildType": "apk" },
+      "env": {
+        "EXPO_PUBLIC_API_BASE_URL": "https://nutriscan-api.YOUR-SUBDOMAIN.workers.dev",
+        "EXPO_PUBLIC_OFF_CONTACT": "youremail@gmail.com"
+      }
+    },
+    "production": { "android": { "buildType": "app-bundle" } }
+  }
+}

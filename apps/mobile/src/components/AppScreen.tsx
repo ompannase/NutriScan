@@ -1,5 +1,5 @@
 import type { PropsWithChildren } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from "react-native";
+import { KeyboardAvoidingView, ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@/theme";
 
@@ -7,7 +7,7 @@ export function AppScreen({ children, scroll = true }: PropsWithChildren<{ scrol
   const { colors } = useTheme();
   const content = <View style={styles.content}>{children}</View>;
   return <SafeAreaView edges={["bottom"]} style={[styles.safe, { backgroundColor: colors.background }]}>
-    <KeyboardAvoidingView style={styles.safe} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+    <KeyboardAvoidingView style={styles.safe} behavior="padding">
       {scroll ? <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">{content}</ScrollView> : content}
     </KeyboardAvoidingView>
   </SafeAreaView>;
