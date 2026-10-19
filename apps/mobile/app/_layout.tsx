@@ -27,6 +27,7 @@ export default function RootLayout() {
           <Stack.Screen name="ocr-review" options={{ title: "Review label" }} />
           <Stack.Screen name="chat" options={{ title: "NutriScan guide" }} />
           <Stack.Screen name="conversations" options={{ title: "Conversations" }} />
+          <Stack.Screen name="add-food" options={{ title: "Add food", presentation: "modal" }} />
           <Stack.Screen name="search" options={{ title: "Find a product" }} />
           <Stack.Screen name="account" options={{ title: "Sync", presentation: "modal" }} />
           <Stack.Screen name="settings/index" options={{ title: "Settings" }} />

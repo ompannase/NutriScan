@@ -1,17 +1,18 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { AppScreen } from "@/components/AppScreen";
 import { Body, Button, Card, EmptyState, Hero, ProgressBar, ProgressRing, Tile } from "@/components/ui";
 import { nutritionRepository, productRepository, profileRepository } from "@/database/repositories";
 import { sumNutrition } from "@/features/nutrition/normalization";
-import type { MealEntry, Product, UserProfile } from "@/types/models";
+import type { MealEntry, MealType, Product, UserProfile } from "@/types/models";
 import { useTheme } from "@/theme";
 import { localDate } from "@/utils/date";
 
 const mealEmoji: Record<string, string> = { breakfast: "🍳", lunch: "🥗", dinner: "🍛", snack: "🍎" };
+const mealOrder: MealType[] = ["breakfast", "lunch", "dinner", "snack"];
 
 export default function HomeScreen() {
   const { colors } = useTheme();
@@ -36,6 +37,9 @@ export default function HomeScreen() {
         <Text style={styles.date}>{today.toUpperCase()}</Text>
         <Text style={styles.greet}>{profile?.name ? `${greeting}, ${profile.name}` : greeting}</Text>
         <Text style={styles.sub}>{entries.length ? `${entries.length} item${entries.length > 1 ? "s" : ""} logged today` : "Nothing logged yet today"}</Text>
+        <Pressable accessibilityRole="button" accessibilityLabel="Add food" onPress={() => router.push("/add-food")} style={styles.addBtn}>
+          <Ionicons name="add-circle" size={22} color="#168A50" /><Text style={styles.addText}>Add food</Text>
+        </Pressable>
       </Hero>
     </Animated.View>
     <Animated.View entering={FadeInDown.delay(120).duration(500)}>
@@ -65,7 +69,20 @@ export default function HomeScreen() {
     <Text style={[styles.section, { color: colors.text }]}>Recent scans</Text>
     {recent.length ? recent.map((product) => <Card key={product.id}><View style={styles.inline}><Text style={styles.emoji}>🛒</Text><View style={styles.grow}><Body>{product.name}</Body><Body muted>{product.brand ?? "Brand not available"}</Body></View></View></Card>) : <EmptyState title="No scans yet" message="Scanned products will appear here. Your history is stored only on this device." />}
     <Text style={[styles.section, { color: colors.text }]}>Today's meal log</Text>
-    {entries.length ? entries.map((entry) => <Card key={entry.id}><View style={styles.row}><View style={styles.inline}><Text style={styles.emoji}>{mealEmoji[entry.meal] ?? "🍽️"}</Text><View><Body>{entry.productName}</Body><Body muted>{entry.meal}</Body></View></View><Body muted>{entry.amountG} g</Body></View></Card>) : <EmptyState title="Nothing logged today" message="Add food from a product result or the Nutrition tab." />}
+    {mealOrder.map((meal) => {
+      const list = entries.filter((entry) => entry.meal === meal);
+      const kcal = Math.round(sumNutrition(list.map((entry) => entry.nutrition)).energyKcal ?? 0);
+      return <Card key={meal}>
+        <View style={styles.row}>
+          <View style={styles.inline}><Text style={styles.emoji}>{mealEmoji[meal]}</Text><View><Body>{meal[0]!.toUpperCase() + meal.slice(1)}</Body><Body muted>{list.length ? `${kcal} kcal` : "Nothing yet"}</Body></View></View>
+          <Pressable accessibilityRole="button" accessibilityLabel={`Add to ${meal}`} onPress={() => router.push({ pathname: "/add-food", params: { meal } })} style={[styles.plus, { backgroundColor: colors.primarySoft }]}><Ionicons name="add" size={22} color={colors.primary} /></Pressable>
+        </View>
+        {list.map((entry) => <View key={entry.id} style={styles.row}>
+          <View style={styles.grow}><Body>{entry.productName}</Body><Body muted>{Math.round(entry.nutrition.energyKcal ?? 0)} kcal · {entry.amountG} g{entry.approximate ? " · approx." : ""}</Body></View>
+          <Pressable accessibilityRole="button" accessibilityLabel={`Delete ${entry.productName}`} onPress={async () => { await nutritionRepository.deleteEntry(entry.id); load(); }} style={styles.trash}><Ionicons name="trash-outline" size={20} color={colors.danger} /></Pressable>
+        </View>)}
+      </Card>;
+    })}
   </AppScreen>;
 }
 const styles = StyleSheet.create({
@@ -80,4 +97,8 @@ const styles = StyleSheet.create({
   grow: { flex: 1 },
   emoji: { fontSize: 26 },
   section: { fontSize: 18, fontWeight: "800", marginTop: 4 },
+  addBtn: { flexDirection: "row", alignItems: "center", gap: 8, alignSelf: "flex-start", backgroundColor: "#FFFFFF", borderRadius: 999, paddingVertical: 10, paddingHorizontal: 16, marginTop: 12 },
+  addText: { color: "#168A50", fontWeight: "800", fontSize: 15 },
+  plus: { width: 38, height: 38, borderRadius: 19, alignItems: "center", justifyContent: "center" },
+  trash: { padding: 8 },
 });
