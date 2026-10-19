@@ -94,7 +94,11 @@ syncRoutes.post("/", async (c) => {
            ON CONFLICT(user_id, collection, record_id) DO UPDATE SET
              data = excluded.data, deleted = excluded.deleted, updated_at = excluded.updated_at,
              seq = excluded.seq, device_id = excluded.device_id
-           WHERE excluded.updated_at > sync_records.updated_at`,
+           WHERE excluded.updated_at > sync_records.updated_at
+           OR (
+           excluded.updated_at = sync_records.updated_at
+           AND excluded.device_id = sync_records.device_id
+   )`,
         ).bind(userId, ch.collection, ch.id, ch.data, ch.op === "delete" ? 1 : 0, ch.updatedAt, userId, n - i - 1, body.deviceId),
       );
     });

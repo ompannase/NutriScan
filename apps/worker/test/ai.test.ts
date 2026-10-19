@@ -110,6 +110,19 @@ describe("AI endpoints", () => {
     expect(r.status).toBe(401);
   });
 
+  it("allows general nutrition education while forbidding invented product facts", async () => {
+    const calls = mockFetch(() => geminiOk());
+    const w = makeWorld({ AI_PROVIDER: "gemini", ...gemini });
+    await w.call("/ai/chat", {
+      body: { message: "What does dietary fibre do? What is the fibre in this product?", context: { product: { name: "Oats" } } },
+    });
+    const sent = JSON.parse(String(calls[0]!.init.body));
+    const system = sent.systemInstruction.parts[0].text as string;
+    expect(system).toContain("broadly accepted general nutrition knowledge");
+    expect(system).toContain("Never invent missing nutrient values");
+    expect(system).toContain("missing allergen declaration as proof");
+  });
+
   it("supports recipe, explain-score and alternatives endpoints", async () => {
     mockFetch(() => geminiOk("ok"));
     const w = makeWorld({ AI_PROVIDER: "gemini", ...gemini });
